@@ -27,16 +27,15 @@ async def __admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def __view_letters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     letters = await DB.get_letters()
+    reply_markup = view.main_keyboard
 
     if not letters:
         await update.message.reply_text(text="Нет созданных предложений\nВыберете действие:", 
-                                      reply_markup=view.main_keyboard)
-        return START_ROUTES
+                                      reply_markup=reply_markup)
+    else:
+        await update.message.reply_text('\n'.join(letters), reply_markup=reply_markup)
     
-    reply_markup = InlineKeyboardMarkup(view.letter_buttons(letters=letters))
-    
-    await update.message.reply_text(f"Выберите предложение для удаления", reply_markup=reply_markup)
-    return DELETE
+    return START_ROUTES
 
 
 async def __create_letter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -56,7 +55,18 @@ async def __insert_letter(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def __delete_letter(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    pass
+    letters = await DB.get_letters()
+
+    if not letters:
+        await update.message.reply_text(text="Нет созданных предложений\nВыберете действие:", 
+                                      reply_markup=view.main_keyboard)
+        return START_ROUTES
+    
+    reply_markup = InlineKeyboardMarkup(view.letter_buttons(letters=letters))
+    
+    await update.message.reply_text(f"Выберите предложение для удаления", reply_markup=reply_markup)
+    return DELETE
+
 
 
 

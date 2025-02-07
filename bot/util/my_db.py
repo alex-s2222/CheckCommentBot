@@ -26,4 +26,4 @@ class DB:
         """Запись предложения в файл"""
 
         async with aiofiles.open(cls.path, "a", encoding="utf-8") as file:
-            await file.write(letter + '; ')
+            await file.write(letter + ';')
