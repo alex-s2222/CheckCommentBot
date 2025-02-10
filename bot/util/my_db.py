@@ -48,8 +48,17 @@ class JsonDB:
 
         with open(cls.path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
-        
+
 
     @staticmethod
     def dict_to_str(data: dict) -> List[str]:
         return [f'{key}: {value}' for key, value in data.items()]
+    
+
+    @classmethod
+    def check_or_create_file(cls):
+        file_path = cls.path
+        if not os.path.isfile(file_path):
+            with open(cls.path, "w", encoding="utf-8") as file:
+                json.dump({}, file, indent=4, ensure_ascii=False)
+
