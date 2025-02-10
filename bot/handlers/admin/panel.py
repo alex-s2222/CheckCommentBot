@@ -14,7 +14,7 @@ from telegram import (
 
 from handlers.admin import view 
 
-from util.my_db import DB, JsonDB
+from util.my_db import JsonDB
 
 
 START_ROUTES, INPUT_LETTER, INPUT_ANSWER, DELETE= range(4)
@@ -45,7 +45,7 @@ async def __create_letter_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     await update.message.reply_text(text='Напишите предложение', reply_markup=view.back_menu)
     return INPUT_LETTER
 
-#TODO обработка кнобки в меню
+
 async def __input_letter(update: Update, context: ContextTypes.DEFAULT_TYPE):    
     user_data = context.user_data
     letter = update.message.text
@@ -55,14 +55,20 @@ async def __input_letter(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     return INPUT_ANSWER
 
+
 async def __input_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_data = context.user_data
     answer = update.message.text 
     letter = user_data['letter']
 
-    #TODO проверка на уникальноcть и кнобка в меню
+    if answer == view.back_button:
+        user_data.clear()
+        await update.message.reply_text(f"Действие отмененно\nВыберете действие:",
+                                        reply_markup=view.main_keyboard)
+        return START_ROUTES
+     
     JsonDB.set_letter(letter, answer)
-    await update.message.reply_text(f"Предложение и ответ внесенны\nВвыберете действие",
+    await update.message.reply_text(f"Предложение и ответ внесенны\nВвыберете действие:",
                                      reply_markup=view.main_keyboard)
     return START_ROUTES
 
@@ -93,7 +99,7 @@ async def __delete_letter(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def admin_panel() -> ConversationHandler:
-    
+
     admin_handlers = ConversationHandler(
         entry_points=[CommandHandler('admin_panel', __admin_panel)],
         states={
@@ -107,7 +113,6 @@ def admin_panel() -> ConversationHandler:
                 MessageHandler(filters.TEXT, __input_letter)
             ],
             INPUT_ANSWER:[
-                MessageHandler(filters.Regex(view.back_button), __admin_panel),
                 MessageHandler(filters.TEXT, __input_answer)
             ],
             DELETE:{
