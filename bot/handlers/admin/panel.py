@@ -116,6 +116,7 @@ def admin_panel() -> ConversationHandler:
                 MessageHandler(filters.TEXT, __input_answer)
             ],
             DELETE:{
+                MessageHandler(filters.Regex(view.back_button), __admin_panel),
                 CallbackQueryHandler(__delete_letter)
             }
         },

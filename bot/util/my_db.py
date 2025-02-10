@@ -38,13 +38,17 @@ class JsonDB:
     @classmethod
     def delete_letter(cls, id: int) -> None:
         data = None 
+        search_key = None
 
         with open(cls.path, "r", encoding="utf-8") as file:
             data = OrderedDict(json.load(file))
         
         for idx, key in enumerate(data.keys()):
             if idx == id:
-                del data[key]
+                search_key = key
+        
+        if search_key:
+            del data[search_key]       
 
         with open(cls.path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
