@@ -4,7 +4,15 @@ from telegram.ext import CallbackContext
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
+from dotenv import dotenv_values
+
+from telethon import TelegramClient
+
 from util.my_db import JsonDB
+
+
+api_id = dotenv_values(".env").get('API_ID')
+api_hash = dotenv_values(".env").get('API_HASH')
 
 
 class Comment:
@@ -18,7 +26,15 @@ class Comment:
                 return None
             
             response = f'{answer}'
-            await update.message.reply_text(response)
+
+            client = TelegramClient('defsefs', api_id, api_hash)
+            client.start()
+            chat_id = update.message.chat_id
+            async with client:
+                await client.send_message(chat_id, response, reply_to=update.message.message_id)
+
+
+            # await update.message.reply_text(response)
 
     @staticmethod
     def __get_answer(user_message: str):
