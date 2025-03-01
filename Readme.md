@@ -22,8 +22,8 @@ pip install -r requirements.txt
 FILE_NAME=имя файла которое будет создаваться
 
 ```bash
-vim excample.env 
-mv excample.env .env
+vim example.env 
+mv example.env .env
 ```
 
 Запуск бота
